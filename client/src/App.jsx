@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Dashboard from './modules/Dashboard.jsx'
 import Registro from './modules/Registro.jsx'
 import Catalogos from './modules/Catalogos.jsx'
@@ -58,6 +58,7 @@ export default function App() {
   const [avisoSesion, setAvisoSesion] = useState('')
   const [activo, setActivo] = useState('registro')
   const [perfilAbierto, setPerfilAbierto] = useState(false)
+  const perfilRef = useRef(null)
 
   useEffect(() => {
     api.onSesionTerminada(() => {
@@ -108,6 +109,18 @@ export default function App() {
     setAvisoSesion('')
     setActivo(destinoInicial(data.usuario.rol))
   }
+
+  // Cerrar perfil móvil al tocar fuera del botón
+  useEffect(() => {
+    if (!perfilAbierto) return undefined
+    const handler = (e) => {
+      if (perfilRef.current && !perfilRef.current.contains(e.target)) {
+        setPerfilAbierto(false)
+      }
+    }
+    document.addEventListener('pointerdown', handler)
+    return () => document.removeEventListener('pointerdown', handler)
+  }, [perfilAbierto])
 
   const handleLogout = async () => {
     if (!window.confirm('¿Estás seguro de que quieres cerrar sesión?')) {
@@ -176,31 +189,23 @@ export default function App() {
 
           {/* Perfil del usuario (móvil: dentro de la barra flotante) */}
           {perfilAbierto ? (
-            <div className="nav-item user-item">
-              <button
-                type="button"
-                className="bar-action bar-action-logout"
-                onClick={handleLogout}
-                aria-label="Cerrar sesión"
-              >
-                <Icon name="doorOpen" size={16} />
-              </button>
-              <button
-                type="button"
-                className="bar-action bar-action-cancel"
-                onClick={() => setPerfilAbierto(false)}
-                aria-label="Cancelar"
-              >
-                <Icon name="arrowLeft" size={16} />
-              </button>
-            </div>
+            <button
+              ref={perfilRef}
+              type="button"
+              className="nav-item user-item user-item-logout"
+              onClick={handleLogout}
+              aria-label="Cerrar sesión"
+            >
+              <Icon name="doorOpen" size={16} />
+              <span>Cerrar</span>
+            </button>
           ) : (
             <button
               type="button"
               className="nav-item user-item"
               onClick={() => setPerfilAbierto(true)}
-              aria-expanded={perfilAbierto}
-              aria-label="Abrir el perfil del usuario"
+              aria-expanded={false}
+              aria-label="Abrir opciones de perfil"
             >
               <Icon name="user" size={16} />
               <span>Perfil</span>

@@ -1843,14 +1843,14 @@ tbody tr:last-child td {
   .nav-item {
     width: auto;
     flex: 1 1 0;
-    min-width: 70px;
+    min-width: 60px;
     white-space: nowrap;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    gap: 2px;
+    gap: 1px;
     padding: 6px 12px;
     font-size: 10px;
     line-height: 1.2;
@@ -1884,7 +1884,7 @@ tbody tr:last-child td {
 
   .bar-action svg {
     width: 16px;
-    height: 16px;
+    height: 13px;
   }
 
   .bar-action-logout {
@@ -1914,6 +1914,16 @@ tbody tr:last-child td {
 
   .user-item span {
     white-space: nowrap;
+  }
+
+  .user-item.user-item-logout {
+    color: #e07a5a;
+    background: rgba(168, 69, 42, 0.18);
+  }
+
+  .user-item.user-item-logout:hover {
+    background: rgba(168, 69, 42, 0.32);
+    color: #f4a080;
   }
 
   .main {
