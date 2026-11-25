@@ -1,0 +1,54 @@
+services:
+
+  # ---------------------------------------------------------------
+  # 1) Base de datos MySQL 8
+  # ---------------------------------------------------------------
+  db:
+    image: mysql:8
+    container_name: ecochain-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ecochain
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------
+  # 2) Backend Spring Boot
+  # ---------------------------------------------------------------
+  backend:
+    build: ./service
+    container_name: ecochain-backend
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/ecochain?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      db:
+        condition: service_healthy   # espera a que el healthcheck de MySQL pase
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------
+  # 3) Frontend React/Vite servido con Nginx
+  # ---------------------------------------------------------------
+  frontend:
+    build: ./client
+    container_name: ecochain-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  mysql_data:

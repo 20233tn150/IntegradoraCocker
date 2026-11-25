@@ -1,0 +1,25 @@
+# ---------- Java / Maven (service/) ----------
+service/target/
+service/classes/
+service/.mvn/
+
+# IntelliJ / IDE
+.idea/
+.vscode/
+*.iml
+
+# ---------- Node / Vite (client/) ----------
+client/node_modules/
+client/dist/
+client/.vite/
+
+# ---------- Env & secrets ----------
+.env
+.env.*
+!.env.example
+*.log
+
+# ---------- OS junk ----------
+.DS_Store
+Thumbs.db
+desktop.ini
